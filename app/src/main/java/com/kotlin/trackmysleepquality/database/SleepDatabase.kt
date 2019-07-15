@@ -15,8 +15,6 @@ abstract class SleepDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): SleepDatabase {
             synchronized(this) {
-                // SOS: he says we assign INSTANCE to instance in order to take advantage of smart-cast
-                // which is only available to local vars, but I can't see any smart-cast...
                 var instance = INSTANCE
 
                 if (instance == null) {
