@@ -1,14 +1,12 @@
 package com.kotlin.trackmysleepquality.sleeptracker
 
 import android.app.Application
-import android.text.Spanned
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.kotlin.trackmysleepquality.database.SleepDatabaseDao
 import com.kotlin.trackmysleepquality.database.SleepNight
-import com.kotlin.trackmysleepquality.formatNights
 import kotlinx.coroutines.*
 
 class SleepTrackerViewModel(
@@ -18,11 +16,7 @@ class SleepTrackerViewModel(
     private var viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private val nights = dao.getAllNights()
-
-    val nightsString: LiveData<Spanned> = Transformations.map(nights) { nights ->
-        formatNights(nights, application.resources)
-    }
+    val nights = dao.getAllNights()
 
     private var tonight = MutableLiveData<SleepNight?>()
 
@@ -30,9 +24,6 @@ class SleepTrackerViewModel(
         initializeTonight()
     }
 
-    // SOS: I must specify the returned type explicitly for these calls, because Transformations.map
-    // is a Java call that does not specify whether it returns Nullable or NotNull, so I get a warning
-    // (remove type to see it). IOW, here I must decide if it's Boolean or Boolean?
     val startButtonVisible: LiveData<Boolean> = Transformations.map(tonight) {
         it == null
     }
@@ -45,12 +36,8 @@ class SleepTrackerViewModel(
         it?.isNotEmpty()
     }
 
-    // SOS: We want the fragment to handle navigation, so we'll make it observe a LiveData that we
-    // change when the navigation must be done
     private val _navigateToSleepQuality = MutableLiveData<SleepNight>()
 
-    // SOS: the fragment actually observes this val which hides the above val (so that the fragment
-    // can't change the value of the LiveData..
     val navigateToSleepQuality: LiveData<SleepNight>
         get() = _navigateToSleepQuality
 

@@ -41,8 +41,6 @@ class SleepTrackerFragment : Fragment() {
             }
         })
 
-        // SOS: showing a snackbar is a UI event, so it must be done by the fragment, whereas the
-        // viewModel itself will decide WHEN it's time to show it!
         viewModel.showSnackBarEvent.observe(this, Observer {
             if (it) {
                 Snackbar.make(view!!,
@@ -50,6 +48,15 @@ class SleepTrackerFragment : Fragment() {
                         Snackbar.LENGTH_SHORT)
                         .show()
                 viewModel.doneShowingSnackBar()
+            }
+        })
+
+        val adapter = SleepNightAdapter()
+        binding.sleepList.adapter = adapter
+
+        viewModel.nights.observe(this, Observer {
+            it?.let {
+                adapter.nights = it
             }
         })
 
