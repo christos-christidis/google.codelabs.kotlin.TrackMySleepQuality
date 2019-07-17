@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.kotlin.trackmysleepquality.R
 import com.kotlin.trackmysleepquality.database.SleepDatabase
@@ -20,11 +21,10 @@ class SleepTrackerFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
         val binding: FragmentSleepTrackerBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_sleep_tracker, container, false)
 
-        val application = activity!!.application
+        val application = this.activity!!.application
         val dao = SleepDatabase.getInstance(application).sleepDatabaseDao
 
         val viewModelFactory = SleepTrackerViewModelFactory(dao, application)
@@ -35,11 +35,39 @@ class SleepTrackerFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
+        setUpRecyclerView(binding.sleepList)
+
+        registerObservers(viewModel, binding.sleepList.adapter as SleepNightAdapter)
+
+        return binding.root
+    }
+
+    private fun setUpRecyclerView(recyclerView: RecyclerView) {
+        val adapter = SleepNightAdapter { nightId ->
+            Toast.makeText(context, "$nightId", Toast.LENGTH_LONG).show()
+            findNavController().navigate(SleepTrackerFragmentDirections
+                    .actionSleepTrackerToSleepDetail(nightId))
+        }
+
+        recyclerView.adapter = adapter
+
+        val manager = GridLayoutManager(activity, 3)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int) = when (position) {
+                0 -> 3
+                else -> 1
+            }
+        }
+
+        recyclerView.layoutManager = manager
+    }
+
+    private fun registerObservers(viewModel: SleepTrackerViewModel, adapter: SleepNightAdapter) {
         viewModel.navigateToSleepQuality.observe(this, Observer { night ->
             night?.let {
                 findNavController().navigate(SleepTrackerFragmentDirections
                         .actionSleepTrackerToSleepQuality(night.nightId))
-                viewModel.doneNavigating()
+                viewModel.doneNavigatingToSleepQuality()
             }
         })
 
@@ -53,28 +81,10 @@ class SleepTrackerFragment : Fragment() {
             }
         })
 
-        viewModel.navigateToSleepDetail.observe(this, Observer { nightId ->
-            nightId?.let {
-                findNavController().navigate(SleepTrackerFragmentDirections
-                        .actionSleepTrackerToSleepDetail(nightId))
-                viewModel.onSleepDetailNavigated()
-            }
-        })
-
-        val adapter = SleepNightAdapter(SleepNightListener { nightId ->
-            Toast.makeText(context, "$nightId", Toast.LENGTH_LONG).show()
-            viewModel.onSleepNightClicked(nightId)
-        })
-
-        binding.sleepList.adapter = adapter
-        binding.sleepList.layoutManager = GridLayoutManager(activity, 3)
-
         viewModel.nights.observe(this, Observer {
             it?.let {
-                adapter.submitList(it)
+                adapter.addHeaderAndSubmitList(it)
             }
         })
-
-        return binding.root
     }
 }

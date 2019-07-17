@@ -11,34 +11,26 @@ class SleepDetailViewModel(
         sleepNightKey: Long = 0L,
         dao: SleepDatabaseDao) : ViewModel() {
 
-    val database = dao
-
     private val viewModelJob = Job()
 
-    private val night: LiveData<SleepNight>
-
-    fun getNight() = night
-
-
-    init {
-        night = database.getNightWithId(sleepNightKey)
-    }
+    private val night: LiveData<SleepNight> = dao.getNightWithId(sleepNightKey)
 
     private val _navigateToSleepTracker = MutableLiveData<Boolean?>()
-
     val navigateToSleepTracker: LiveData<Boolean?>
         get() = _navigateToSleepTracker
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
+    fun getNight() = night
+
+    fun onClose() {
+        _navigateToSleepTracker.value = true
     }
 
     fun doneNavigating() {
         _navigateToSleepTracker.value = null
     }
 
-    fun onClose() {
-        _navigateToSleepTracker.value = true
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
     }
 }

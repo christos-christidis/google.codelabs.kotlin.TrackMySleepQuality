@@ -10,9 +10,9 @@ class SleepTrackerViewModelFactory(
         private val dao: SleepDatabaseDao,
         private val application: Application) : ViewModelProvider.Factory {
 
-    @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SleepTrackerViewModel::class.java)) {
+            @Suppress("unchecked_cast")
             return SleepTrackerViewModel(dao, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

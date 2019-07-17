@@ -22,22 +22,23 @@ class SleepDetailFragment : Fragment() {
                 inflater, R.layout.fragment_sleep_detail, container, false)
 
         val application = activity!!.application
+        val dao = SleepDatabase.getInstance(application).sleepDatabaseDao
+
         val args = SleepDetailFragmentArgs.fromBundle(arguments!!)
 
-        val dao = SleepDatabase.getInstance(application).sleepDatabaseDao
         val viewModelFactory = SleepDetailViewModelFactory(args.sleepNightKey, dao)
 
-        val sleepDetailViewModel = ViewModelProviders.of(
+        val viewModel = ViewModelProviders.of(
                 this, viewModelFactory).get(SleepDetailViewModel::class.java)
 
-        binding.viewModel = sleepDetailViewModel
+        binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
-        sleepDetailViewModel.navigateToSleepTracker.observe(this, Observer {
+        viewModel.navigateToSleepTracker.observe(this, Observer {
             if (it == true) {
                 findNavController().navigate(
                         SleepDetailFragmentDirections.actionSleepDetailToSleepTracker())
-                sleepDetailViewModel.doneNavigating()
+                viewModel.doneNavigating()
             }
         })
 

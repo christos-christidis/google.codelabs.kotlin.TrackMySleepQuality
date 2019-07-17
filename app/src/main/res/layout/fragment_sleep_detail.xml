@@ -26,7 +26,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:sleepImage="@{viewModel.night}" />
+            app:sleepImage="@{viewModel.night}"
+            tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/quality_string"
@@ -38,7 +39,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/quality_image"
-            app:sleepQualityString="@{viewModel.night}" />
+            app:sleepQualityString="@{viewModel.night}"
+            tools:text="quality of sleep" />
 
         <TextView
             android:id="@+id/sleep_length"
@@ -50,7 +52,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/quality_string"
-            app:sleepDurationFormatted="@{viewModel.night}" />
+            app:sleepDurationFormatted="@{viewModel.night}"
+            tools:text="length of sleep" />
 
         <Button
             android:layout_width="wrap_content"
