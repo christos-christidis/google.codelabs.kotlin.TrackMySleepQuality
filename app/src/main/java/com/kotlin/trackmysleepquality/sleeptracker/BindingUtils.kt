@@ -8,9 +8,6 @@ import com.kotlin.trackmysleepquality.convertDurationToFormatted
 import com.kotlin.trackmysleepquality.convertNumericQualityToString
 import com.kotlin.trackmysleepquality.database.SleepNight
 
-// SOS: search layout eg for app:sleepDurationFormatted.
-// There's no advantage to doing it this way AFAIK, it seems to me that binding the traditional way
-// is clearer. But I must know this technique too in case I encounter it
 @BindingAdapter("sleepDurationFormatted")
 fun TextView.setSleepDurationFormatted(night: SleepNight) {
     text = convertDurationToFormatted(night.startTimeMilli, night.endTimeMilli, context.resources)

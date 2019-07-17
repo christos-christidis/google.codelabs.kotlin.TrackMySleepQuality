@@ -8,9 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kotlin.trackmysleepquality.database.SleepNight
 import com.kotlin.trackmysleepquality.databinding.ListItemSleepNightBinding
 
-// SOS: ListAdapter handles all item diffs, removals etc automatically. For that it uses DiffUtil.
-// For my part, I simply have to call submitList on the adapter whenever sth changes! Note: this is
-// way faster for large lists. Also compare w previous version to see how much code I've deleted
 class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,7 +24,6 @@ class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                // SOS: Note the binding class I use to inflate
                 val binding = ListItemSleepNightBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
@@ -36,7 +32,6 @@ class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
 
     private fun ViewHolder.bind(night: SleepNight) {
         binding.night = night
-        // SOS: good idea to always call this when using binding adapters. Speeds things up
         binding.executePendingBindings()
     }
 }
