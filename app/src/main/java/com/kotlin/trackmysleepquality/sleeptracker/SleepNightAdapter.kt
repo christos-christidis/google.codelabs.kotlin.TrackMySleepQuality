@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kotlin.trackmysleepquality.database.SleepNight
 import com.kotlin.trackmysleepquality.databinding.ListItemSleepNightBinding
 
-class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
+class SleepNightAdapter(private val clickListener: (sleepId: Long) -> Unit)
+    : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -33,6 +34,7 @@ class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
     private fun ViewHolder.bind(night: SleepNight) {
         binding.night = night
         binding.executePendingBindings()
+        binding.root.setOnClickListener { clickListener(night.nightId) }
     }
 }
 
